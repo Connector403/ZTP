@@ -67,26 +67,60 @@ class MaxValue(View):
     # max value function 
     #get max value of category 
     def maxValue (self, book):
-        wsNames = ['Calculations']
+        wsNames = ['Customer 1','Customer 2','Customer 3','Customer 4' ]
+    
+        sheet2 = book['Rate Price']
         holyG_2 = {}
-        
 
+      
         for customer in wsNames:
-            ws = book[customer]
+            sheet = book[customer]
+            # read row but for col(2,3 ) subtract and have a list of 2 value 
+           
+            if sheet.cell(8,1).value:
+                thirdRow = str(sheet.cell(8,1).value)
+                weekendRat1 = float(sheet.cell(8,2).value)
+                weekendRat2 = float(sheet.cell(8,3).value)
+            else:
+                thirdRow = 0
+                weekendRat2 = 0 
+                weekendRat1 = 0
+            dayRate1 =  float(sheet.cell(6,2).value)
+            dayRate2 = float(sheet.cell(6,3).value)
+            nightRate1 = float(sheet.cell(7,2).value)
+            nightRate2 = float(sheet.cell(7,3).value)
+            dayConsumption =  dayRate2 - dayRate1
+            nightConsumption =  nightRate2 - nightRate1 
 
-            #header
-            headere = []
-            for cell in ws.iter_rows(min_row=1, max_row=1, min_col=1, max_col=4, values_only=True):
-                for x in cell:
-                    headere.append(x)
-             # data
-            data = []
-            for cell in ws.iter_rows(min_row=2, max_row=4, min_col=1, max_col=4, values_only=True):
-                for x in cell:
-                    data.append(x)
-        # print (firstReading)
-            holyG_2[customer] = {'header': header, 'data': data}
-        return JsonResponse(holyG_2, safe=False)
+            weekendRate = weekendRat2 - weekendRat1 
+
+            if thirdRow == 'Weekend Rate':
+                weekendConsumptionRate =  weekendRate * float(sheet2.cell(4,2).value)
+            elif thirdRow == 'Weekend Day Rate':
+                weekendConsumptionRate =  weekendRate * float(sheet2.cell(5,2).value)
+            else:
+                weekendConsumptionRate =  weekendRate * float(sheet2.cell(6,2).value)
+                
+            
+
+
+           
+
+            dayConsumptionRate =  dayConsumption * float(sheet2.cell(2,2).value)
+            nightConsumptionRate = nightConsumption * float(sheet2.cell(3,2).value)
+            totalCost = dayConsumptionRate + nightConsumptionRate + weekendConsumptionRate
+
+            holyG_2[customer] = [dayConsumptionRate, nightConsumptionRate, totalCost] 
+            
+
+            
+
+
+
+  
+        return holyG_2
+
+
     def get(self, request):
         #return a json response 
         book = load_workbook(settings.EX_FILE)
@@ -94,24 +128,13 @@ class MaxValue(View):
  
         context = {'data': self.maxValue(book)}
 
-#         Rate Name	Price (£/kWh)
-        # Day Rate	0.0732
-        # Night Rate	0.055
-        # Weekend Rate	0.063
-        # Weekend Day Rate	0.067
-        # Weekend Night Rate	0.063
 
-
-        # print(context)
-
-        # return HttpResponse(context)
-        # return render(request, "Core/index.html", context)
 
 
 
         print (context )
-        print("HHHHHHHHHHHHHHhhh")
-        return render(request, "Core/index.html", context)
+  
+        return HttpResponse(context.values()) 
 
 
     def post(self):

@@ -39,12 +39,9 @@
                     </thead>
                     <tbody>
                         
-                           <!-- {% for key, value in theHolyGrail.kl%} 
-                                {{key}}
-                            {%endfor%} -->
-                            <!-- {{data}} -->
-
-                            {%for key, value in data.items%}
+                    {% comment %} data should go heeress {% endcomment %}
+                            
+                          {%for key, value in data.items%}
                             <tr>
                                 <td>
                                     {{value.personal.0}}
@@ -87,6 +84,8 @@
                         
                                
                             {%endfor%}
+                               
+                      
                                    
                         
                         
@@ -134,13 +133,13 @@
                         </tr>
                     </thead>
                     <tbody id="tbody">
-                        <tr>
+                       
                             {%for key, value in data.items%}
-
+                            <tr> 
                               {{  key.data}}
                              
                             {%endfor%}
-                        </tr>
+                            </tr>
                    
                     </tbody>
                 </table>
