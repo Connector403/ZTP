@@ -5,6 +5,8 @@ from openpyxl import load_workbook
 from django.conf import settings
 import xlrd
 
+
+
 import json 
 
 # Create your views here.
@@ -76,6 +78,8 @@ class MaxValue(View):
         for customer in wsNames:
             sheet = book[customer]
             # read row but for col(2,3 ) subtract and have a list of 2 value 
+
+
            
             if sheet.cell(8,1).value:
                 thirdRow = str(sheet.cell(8,1).value)
@@ -85,6 +89,9 @@ class MaxValue(View):
                 thirdRow = 0
                 weekendRat2 = 0 
                 weekendRat1 = 0
+
+           
+                
             dayRate1 =  float(sheet.cell(6,2).value)
             dayRate2 = float(sheet.cell(6,3).value)
             nightRate1 = float(sheet.cell(7,2).value)
@@ -92,25 +99,38 @@ class MaxValue(View):
             dayConsumption =  dayRate2 - dayRate1
             nightConsumption =  nightRate2 - nightRate1 
 
+
+            if sheet.cell(7,1).value == 'Weekend Rate': 
+                nightConsumptionRate = nightConsumption * float(sheet2.cell(4,2).value)
+            elif sheet.cell(7,1).value == 'Night Rate': 
+                nightConsumptionRate = nightConsumption * float(sheet2.cell(3,2).value)
+            else:
+                nightConsumptionRate = 0
+
+                
+
             weekendRate = weekendRat2 - weekendRat1 
 
+            #calculating rate based off rate name 
             if thirdRow == 'Weekend Rate':
                 weekendConsumptionRate =  weekendRate * float(sheet2.cell(4,2).value)
             elif thirdRow == 'Weekend Day Rate':
                 weekendConsumptionRate =  weekendRate * float(sheet2.cell(5,2).value)
             else:
                 weekendConsumptionRate =  weekendRate * float(sheet2.cell(6,2).value)
-                
-            
-
-
-           
 
             dayConsumptionRate =  dayConsumption * float(sheet2.cell(2,2).value)
-            nightConsumptionRate = nightConsumption * float(sheet2.cell(3,2).value)
             totalCost = dayConsumptionRate + nightConsumptionRate + weekendConsumptionRate
 
-            holyG_2[customer] = [dayConsumptionRate, nightConsumptionRate, totalCost] 
+
+            personalDescription = []
+            for cell in sheet.iter_rows(min_row=1, max_row=3, min_col=2, max_col=2, values_only=True):
+                # x = type(cell)
+                # ('Martyn' ,'3, Covent Garden, London', 'XXXXXXXXX' )
+                for x in cell: 
+                    personalDescription.append(x)
+
+            holyG_2[customer] = [{'personal': personalDescription}, dayConsumption, nightConsumption, totalCost] 
             
 
             
@@ -134,7 +154,7 @@ class MaxValue(View):
 
         print (context )
   
-        return HttpResponse(context.values()) 
+        return JsonResponse(context)
 
 
     def post(self):
