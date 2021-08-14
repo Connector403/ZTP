@@ -121,7 +121,7 @@
     </div>
     <div class="row" >
         <div class="col-sm-12">
-            <div class="table-responive">
+            <div  id="task2"class="table-responive">
                 <table class="table">
                     <thead id="thead">
                         <tr>
@@ -214,36 +214,102 @@
 
      <script>
         $(document).ready(function () {
+            $('#task2').hide();
+            $( "#shootCalc" ).click(function() {
+                $( "#task2" ).toggle();
+            });
             $.ajax({
                 type: 'GET',
                 url: '//localhost:8000/maxvalue',
                 success: function (resp) {
-                    console.log(resp.data)
-                    // for max of resp.data[customer][1]
-                    const customer = ['Customer 1', 'Customer 2', 'Customer 3', 'Customer 4']
-                    let currentDay;
-                    let currentCustDetail;
-                    let dayArr = []
-                    for (let i = 0; i < customer.length; i++) {
-
-                        dayArr.push(resp.data[customer[i][i]])
-
+                    //create arr of all day consumption values
+                    let dayConsumption = [resp.data['Customer 1'][1], resp.data['Customer 2'][1], resp.data['Customer 3'][1], resp.data['Customer 4'][1]]
+                    // find max of array
+                    let dayMaxConsumption = Math.max(...dayConsumption)
+                    // find index of max number 
+                    let dayMaxConsumptionIndex =  dayConsumption.indexOf(dayMaxConsumption, 0)
+                    // console.log(dayMaxConsumptionIndex)
+                    // 0 = customer 1, 1 = customer2 ...
+                    if (dayMaxConsumptionIndex ==0 ){
+                        $('#totalDay').text(resp.data['Customer 1'][1])
+                        $('#nightFName').text(resp.data['Customer 1'][0]['personal'][0])
+                        $('#nightAdress').text(resp.data['Customer 1'][0]['personal'][1])
+                        $('#nightMetNum').text(resp.data['Customer 1'][0]['personal'][2])
+                    }else if (dayMaxConsumptionIndex ==1 ) {
+                        $('#totalDay').text(resp.data['Customer 2'][1])
+                        $('#nightFName').text(resp.data['Customer 2'][0]['personal'][0])
+                        $('#nightAdress').text(resp.data['Customer 2'][0]['personal'][1])
+                        $('#nightMetNum').text(resp.data['Customer 2'][0]['personal'][2])
+                    }else if (dayMaxConsumptionIndex ==2 ) {
+                        $('#totalDay').text(resp.data['Customer 3'][1])
+                        $('#nightFName').text(resp.data['Customer 3'][0]['personal'][0])
+                        $('#nightAdress').text(resp.data['Customer 3'][0]['personal'][1])
+                        $('#nightMetNum').text(resp.data['Customer 4'][0]['personal'][2])
+                    }else if (dayMaxConsumptionIndex ==3 ) {
+                        $('#totalDay').text(resp.data['Customer 4'][1])
+                        $('#nightFName').text(resp.data['Customer 4'][0]['personal'][0])
+                        $('#nightAdress').text(resp.data['Customer 4'][0]['personal'][1])
+                        $('#nightMetNum').text(resp.data['Customer 4'][0]['personal'][2])
                     }
-                    // const max = resp.data.reduce(function())
-                    let isLargestDay = Math.max(dayArr);
-                    currentDay = dayArr.findIndex(isLargestDay)
 
-                        //  populate day rate row of table
-                    $('#calcTable').click(function() {
-                        $('#totalDay').text = resp.data[customer[currentDay][1]]
-                    })
-                    // for max of resp.data[customer][2]
-                        //  populate night rate row of table
+                    // array of night consumption value
+                    let nightConsumption = [resp.data['Customer 1'][2], resp.data['Customer 2'][2], resp.data['Customer 3'][2], resp.data['Customer 4'][2]]
+                    // find max value of array 
+                    let nightMaxConsumption = Math.max(...nightConsumption)
+                    // finding index of max value which is then used to identify which customer it came from
+                    let nightMaxConsumptionIndex =  nightConsumption.indexOf(nightMaxConsumption, 0)
+                    // console.log(dayMaxConsumptionIndex)
+                    if (nightMaxConsumptionIndex ==0 ){
+                        $('#totalNight').text(resp.data['Customer 1'][2])
+                        $('#dayFName').text(resp.data['Customer 1'][0]['personal'][0])
+                        $('#dayAddress').text(resp.data['Customer 1'][0]['personal'][1])
+                        $('#dayMetNum').text(resp.data['Customer 1'][0]['personal'][2])
+                    }else if (nightMaxConsumptionIndex ==1 ) {
+                        $('#totalNight').text(resp.data['Customer 2'][2])
+                        $('#dayFName').text(resp.data['Customer 2'][0]['personal'][0])
+                        $('#dayAddress').text(resp.data['Customer 2'][0]['personal'][1])
+                        $('#dayMetNum').text(resp.data['Customer 2'][0]['personal'][2])
+                    }else if (nightMaxConsumptionIndex ==2 ) {
+                        $('#totalNight').text(resp.data['Customer 3'][2])
+                        $('#dayFName').text(resp.data['Customer 3'][0]['personal'][0])
+                        $('#dayAddress').text(resp.data['Customer 3'][0]['personal'][1])
+                        $('#dayMetNum').text(resp.data['Customer 4'][0]['personal'][2])
+                    }else if (nightMaxConsumptionIndex ==3 ) {
+                        $('#totalNight').text(resp.data['Customer 4'][2])
+                        $('#dayFName').text(resp.data['Customer 4'][0]['personal'][0])
+                        $('#dayAddress').text(resp.data['Customer 4'][0]['personal'][1])
+                        $('#dayMetNum').text(resp.data['Customer 4'][0]['personal'][2])
+                    }
                     
-                    // for max of resp.data[customer][3]
-                        //  populate total rate row of table
 
-                    // console.log(custOne)
+                    //Total Cost
+                    let TotalCostArr = [resp.data['Customer 1'][2], resp.data['Customer 2'][2], resp.data['Customer 3'][2], resp.data['Customer 4'][2]]
+                    // find max value of array 
+                    let TotalMax = Math.max(...TotalCostArr)
+                    // finding index of max value which is then used to identify which customer it came from
+                    let TotalMaxIndex =  TotalCostArr.indexOf(TotalMax, 0)
+                    // console.log(dayMaxConsumptionIndex)
+                    if (TotalMaxIndex ==0 ){
+                        $('#totalCost').text(resp.data['Customer 1'][3])
+                        $('#totalFName').text(resp.data['Customer 1'][0]['personal'][0])
+                        $('#totalAddress').text(resp.data['Customer 1'][0]['personal'][1])
+                        $('#totalMetNum').text(resp.data['Customer 1'][0]['personal'][2])
+                    }else if (TotalMaxIndex ==1 ) {
+                        $('#totalCost').text(resp.data['Customer 2'][3])
+                        $('#totalFName').text(resp.data['Customer 2'][0]['personal'][0])
+                        $('#totalAddress').text(resp.data['Customer 2'][0]['personal'][1])
+                        $('#totalMetNum').text(resp.data['Customer 2'][0]['personal'][2])
+                    }else if (TotalMaxIndex ==2 ) {
+                        $('#totalCost').text(resp.data['Customer 3'][3])
+                        $('#totalFName').text(resp.data['Customer 3'][0]['personal'][0])
+                        $('#totalAddress').text(resp.data['Customer 3'][0]['personal'][1])
+                        $('#totalMetNum').text(resp.data['Customer 4'][0]['personal'][2])
+                    }else if (TotalMaxIndex ==3 ) {
+                        $('#totalCost').text(resp.data['Customer 4'][3])
+                        $('#totalFName').text(resp.data['Customer 4'][0]['personal'][0])
+                        $('#totalAddress').text(resp.data['Customer 4'][0]['personal'][1])
+                        $('#totalMetNum').text(resp.data['Customer 4'][0]['personal'][2])
+                    }
                     
                 }
             })
