@@ -4,20 +4,11 @@ from django.http import HttpResponse, Http404,JsonResponse
 from openpyxl import load_workbook
 from django.conf import settings
 import xlrd
-
-
-
 import json 
 
-# Create your views here.
-
-
 class HomePage(View):
-
-
     def costomerDetails(self,book):
-
-
+        # array for specifying which sheets to iterate through 
         wsNames = ['Customer 1','Customer 2','Customer 3','Customer 4', ]
         theHolyGrail =  {}
 
@@ -30,8 +21,6 @@ class HomePage(View):
                 # ('Martyn' ,'3, Covent Garden, London', 'XXXXXXXXX' )
                 for x in cell: 
                     personalDescription.append(x)
-
-
         
             # consuumption details 
             consumptionDetails = []
@@ -39,9 +28,6 @@ class HomePage(View):
             for cell in ws.iter_rows(min_row=6, max_row=8, min_col=2, max_col=3, values_only=True):
                 for x in cell: 
                     consumptionDetails.append(x)
-
-        
-
       
             theHolyGrail[customer] = {'personal' :personalDescription, 'consumption':  consumptionDetails}
         return theHolyGrail
@@ -56,31 +42,28 @@ class HomePage(View):
         context = {'data': self.costomerDetails(book)}
 
         # print(context)
-
         # return HttpResponse(context)
         return render(request, "Core/index.html", context)
 
     def post(self):
         raise Http404
 
-################################################################
+
 
 class MaxValue(View):
     # max value function 
     #get max value of category 
     def maxValue (self, book):
         wsNames = ['Customer 1','Customer 2','Customer 3','Customer 4' ]
-    
         sheet2 = book['Rate Price']
         holyG_2 = {}
 
       
         for customer in wsNames:
             sheet = book[customer]
-            # read row but for col(2,3 ) subtract and have a list of 2 value 
-
-
+            # read row but for col(2,3 ) subtract and have a list of 2 value
            
+           #calculating consumption rate, consumption energy and total cost
             if sheet.cell(8,1).value:
                 thirdRow = str(sheet.cell(8,1).value)
                 weekendRat1 = float(sheet.cell(8,2).value)
@@ -89,9 +72,7 @@ class MaxValue(View):
                 thirdRow = 0
                 weekendRat2 = 0 
                 weekendRat1 = 0
-
-           
-                
+             
             dayRate1 =  float(sheet.cell(6,2).value)
             dayRate2 = float(sheet.cell(6,3).value)
             nightRate1 = float(sheet.cell(7,2).value)
@@ -106,8 +87,6 @@ class MaxValue(View):
                 nightConsumptionRate = nightConsumption * float(sheet2.cell(3,2).value)
             else:
                 nightConsumptionRate = 0
-
-                
 
             weekendRate = weekendRat2 - weekendRat1 
 
@@ -131,13 +110,7 @@ class MaxValue(View):
                     personalDescription.append(x)
 
             holyG_2[customer] = [{'personal': personalDescription}, dayConsumption, nightConsumption, totalCost] 
-            
 
-            
-
-
-
-  
         return holyG_2
 
 
@@ -145,17 +118,10 @@ class MaxValue(View):
         #return a json response 
         book = load_workbook(settings.EX_FILE)
         #create a worksheet, its auotimcally start at 0
- 
         context = {'data': self.maxValue(book)}
-
-
-
-
-
-        print (context )
+        # print (context )
   
         return JsonResponse(context)
-
 
     def post(self):
         raise Http404
