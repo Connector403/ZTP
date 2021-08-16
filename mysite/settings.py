@@ -56,7 +56,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/home/hafiz/Desktop/Project/mysite/ZTP/templates/'],
+        'DIRS': [os.path.join( BASE_DIR,'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,4 +128,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # excel file path
-EX_FILE = "/home/hafiz/Desktop/Project/mysite/ZTP/Core/static/EnergyConsumptionDetail_updated.xlsx"
+EX_FILE = os.path.join(BASE_DIR, 'static/EnergyConsumptionDetail_updated.xlsx') 
+
+#"/home/hafiz/Desktop/ZTP/Core/static/EnergyConsumptionDetail_updated.xlsx"
